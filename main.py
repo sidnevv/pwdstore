@@ -116,7 +116,7 @@ def check_user():
             dialog.title("Login")
             dialog.geometry("250x120")
             dialog.resizable(False, False)
-            dialog.iconbitmap(default=os.path.join(os.path.dirname(sys.executable), 'favicon.ico'))
+            dialog.iconbitmap(default='favicon.ico')
 
             dialog.eval('tk::PlaceWindow . center')
 
@@ -158,7 +158,7 @@ def create_user():
     dialog = tk.Tk()
     dialog.title("Create User")
     dialog.geometry("250x120")
-    dialog.iconbitmap(default=os.path.join(os.path.dirname(sys.executable), 'favicon.ico'))
+    dialog.iconbitmap(default='favicon.ico')
     dialog.resizable(False, False)
     dialog.eval('tk::PlaceWindow . center')
 
@@ -197,6 +197,7 @@ def main_app(username):
     root = tk.Tk()
     root.title("Password Manager")
     root.resizable(False, False)
+    root.maxsize(width=800, height=480)
 
     # Функция для добавления записи
     def add_record():
@@ -264,9 +265,27 @@ def main_app(username):
         else:
             messagebox.showerror("Error", "No record selected for deletion.")
 
+    # Функция для поиска записей
+    def search_records():
+        search_term = search_entry.get()
+        all_records = show_passwords()
+        filtered_records = [record for record in all_records if search_term.lower() in record[1].lower() or
+                            search_term.lower() in record[2].lower() or search_term.lower() in record[4].lower()]
+        tree.delete(*tree.get_children())
+        for record in filtered_records:
+            tree.insert("", "end", values=(record[1], record[2], record[3], record[4], record[5]), text=record[0])
+
+    # Добавление поля поиска
+    search_label = ttk.Label(root, text="Search:")
+    search_label.grid(row=0, column=0, padx=5, pady=10, sticky='w')
+    search_entry = ttk.Entry(root, width=80)
+    search_entry.grid(row=0, column=1, padx=5, pady=10, sticky='we')
+    search_button = ttk.Button(root, text="Search", command=search_records)
+    search_button.grid(row=0, column=2, padx=5, pady=10, sticky='e')
+
     # Создание таблицы для отображения данных
     columns = ("Service", "Username", "Password", "Description", "Date")
-    tree = CheckboxTreeview(root, columns=columns, show=("headings", "tree"))
+    tree = ttk.Treeview(root, columns=columns, show="headings")
 
     tree.heading("Service", text="Service")
     tree.heading("Username", text="Username")
@@ -274,13 +293,13 @@ def main_app(username):
     tree.heading("Description", text="Description")
     tree.heading("Date", text="Date")
 
-    tree.column("Service", anchor="center")
-    tree.column("Username", anchor="center")
-    tree.column("Password", anchor="center")
-    tree.column("Description", anchor="center")
-    tree.column("Date", anchor="center")
+    tree.column("Service", anchor="center", stretch=False, width=150)
+    tree.column("Username", anchor="center", stretch=False, width=150)
+    tree.column("Password", anchor="center", stretch=False, width=150)
+    tree.column("Description", anchor="center", stretch=False, width=200)
+    tree.column("Date", anchor="center", stretch=False, width=100)
 
-    tree.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+    tree.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky='nsew')
     tree.columnconfigure(0, weight=1)
     tree.columnconfigure(1, weight=1)
     tree.columnconfigure(2, weight=1)
@@ -296,13 +315,12 @@ def main_app(username):
     update_table()
 
     add_button = ttk.Button(root, text="Add Record", command=add_record)
-    add_button.grid(row=1, column=0, ipadx=6, ipady=6, padx=5, pady=5, sticky="ew")
+    add_button.grid(row=2, column=0, padx=5, pady=5, sticky='ew')
     delete_button = ttk.Button(root, text="Delete Record", command=delete_record)
-    delete_button.grid(row=2, column=0, ipadx=6, ipady=6, padx=5, pady=5, sticky="ew")
+    delete_button.grid(row=2, column=2, padx=5, pady=5, sticky='ew')
 
+    root.grid_rowconfigure(1, weight=1)
     root.grid_columnconfigure(0, weight=1)
-
-    root.mainloop()
 
 
 if __name__ == "__main__":
