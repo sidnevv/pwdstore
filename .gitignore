@@ -5,3 +5,6 @@ dist
 
 /cmd.txt
 /pwdstore.spec
+
+/app.db
+/users.pickle
