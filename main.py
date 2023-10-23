@@ -114,25 +114,24 @@ def check_user():
         with open(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'users.pickle'), 'rb') as f:
             dialog = tk.Tk()
             dialog.title("Login")
-            dialog.geometry("250x120")
+            dialog.geometry("250x160")
             dialog.resizable(False, False)
             dialog.iconbitmap(default='favicon.ico')
 
             dialog.eval('tk::PlaceWindow . center')
 
             username_label = ttk.Label(dialog, text="Username:")
-            username_label.pack()
+            username_label.pack(padx=5, pady=5, anchor="w")
             username_entry = ttk.Entry(dialog)
-            username_entry.pack()
+            username_entry.pack(padx=5, pady=5, fill="x")
 
             password_label = ttk.Label(dialog, text="Password:")
-            password_label.pack()
+            password_label.pack(padx=5, pady=5, anchor="w")
             password_entry = ttk.Entry(dialog, show='*')
-            password_entry.pack()
+            password_entry.pack(padx=5, pady=5, fill="x")
 
-            ok_button = ttk.Button(dialog, text="Login",
-                                   command=lambda: validate_user(dialog, username_entry.get(), password_entry.get()))
-            ok_button.pack(padx=5, pady=5)
+            ok_button = ttk.Button(dialog, text="Login", command=lambda: validate_user(dialog, username_entry.get(), password_entry.get()))
+            ok_button.pack(padx=5, pady=5, fill="x")
 
             dialog.mainloop()
     except (FileNotFoundError, EOFError):
@@ -157,24 +156,23 @@ def validate_user(dialog, username, password):
 def create_user():
     dialog = tk.Tk()
     dialog.title("Create User")
-    dialog.geometry("250x120")
+    dialog.geometry("250x160")
     dialog.iconbitmap(default='favicon.ico')
     dialog.resizable(False, False)
     dialog.eval('tk::PlaceWindow . center')
 
     username_label = ttk.Label(dialog, text="Username:")
-    username_label.pack()
+    username_label.pack(padx=5, pady=5, anchor="w")
     username_entry = ttk.Entry(dialog)
-    username_entry.pack()
+    username_entry.pack(padx=5, pady=5, fill="x")
 
     password_label = ttk.Label(dialog, text="Password:")
-    password_label.pack()
+    password_label.pack(padx=5, pady=5, anchor="w")
     password_entry = ttk.Entry(dialog, show='*')
-    password_entry.pack()
+    password_entry.pack(padx=5, pady=5, fill="x")
 
-    ok_button = ttk.Button(dialog, text="OK",
-                           command=lambda: save_user(dialog, username_entry.get(), password_entry.get()))
-    ok_button.pack(padx=5, pady=5)
+    ok_button = ttk.Button(dialog, text="OK", command=lambda: save_user(dialog, username_entry.get(), password_entry.get()))
+    ok_button.pack(padx=5, pady=5, fill="x")
 
     dialog.mainloop()
 
@@ -204,27 +202,37 @@ def main_app(username):
         add_window = tk.Toplevel(root)
         add_window.title("Add Record")
         add_window.resizable(False, False)
+
+        # Label and Entry for Service
         service_label = ttk.Label(add_window, text="Service:")
-        service_label.grid(row=0, column=0, padx=5, pady=5)
+        service_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
         service_entry = ttk.Entry(add_window)
-        service_entry.grid(row=0, column=1, padx=5, pady=5)
+        service_entry.grid(row=0, column=1, padx=5, pady=5, sticky='we')
+
+        # Label and Entry for Username
         username_label = ttk.Label(add_window, text="Username:")
-        username_label.grid(row=1, column=0, padx=5, pady=5)
+        username_label.grid(row=1, column=0, padx=5, pady=5, sticky='e')
         username_entry = ttk.Entry(add_window)
-        username_entry.grid(row=1, column=1, padx=5, pady=5)
+        username_entry.grid(row=1, column=1, padx=5, pady=5, sticky='we')
+
+        # Label and Entry for Password
         password_label = ttk.Label(add_window, text="Password:")
-        password_label.grid(row=2, column=0, padx=5, pady=5)
+        password_label.grid(row=2, column=0, padx=5, pady=5, sticky='e')
         password_entry = ttk.Entry(add_window)
-        password_entry.grid(row=2, column=1, padx=5, pady=5)
+        password_entry.grid(row=2, column=1, padx=5, pady=5, sticky='we')
+
+        # Label and Entry for Description
         description_label = ttk.Label(add_window, text="Description:")
-        description_label.grid(row=3, column=0, padx=5, pady=5)
+        description_label.grid(row=3, column=0, padx=5, pady=5, sticky='e')
         description_entry = ttk.Entry(add_window)
-        description_entry.grid(row=3, column=1, padx=5, pady=5)
+        description_entry.grid(row=3, column=1, padx=5, pady=5, sticky='we')
+
+        # Label and Entry for Password Length
         length_label = ttk.Label(add_window, text="Password Length:")
-        length_label.grid(row=4, column=0, padx=5, pady=5)
-        length_entry = ttk.Entry(add_window)
+        length_label.grid(row=4, column=0, padx=5, pady=5, sticky='e')
+        length_entry = ttk.Spinbox(add_window, from_=1.0, to=50.0)
         length_entry.insert(0, "12")  # Default password length
-        length_entry.grid(row=4, column=1, padx=5, pady=5)
+        length_entry.grid(row=4, column=1, padx=5, pady=5, sticky='we')
 
         def generate_and_insert_password():
             length = int(length_entry.get())
@@ -245,12 +253,17 @@ def main_app(username):
         def close_window():
             add_window.destroy()
 
+        # Button for generating password
         generate_button = ttk.Button(add_window, text="Generate Password", command=generate_and_insert_password)
-        generate_button.grid(row=5, column=0, columnspan=2, padx=5, pady=5)
+        generate_button.grid(row=5, column=0, columnspan=2, padx=5, pady=5, sticky='we')
+
+        # Button for saving the record
         save_button = ttk.Button(add_window, text="Save", command=save_record)
-        save_button.grid(row=6, column=0, columnspan=2, padx=5, pady=5)
+        save_button.grid(row=6, column=0, columnspan=2, padx=5, pady=5, sticky='we')
+
+        # Button for closing the window
         close_button = ttk.Button(add_window, text="Close", command=close_window)
-        close_button.grid(row=7, column=0, columnspan=2, padx=5, pady=5)
+        close_button.grid(row=7, column=0, columnspan=2, padx=5, pady=5, sticky='we')
 
     # Функция для удаления записи
     def delete_record():
